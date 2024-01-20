@@ -1,0 +1,46 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Build
+      id: build
+      run: ./build.sh
+ 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: frameworks
+        path: ./xcframework
+
+    - name: commit and push
+      run: |
+        echo '查看并移动xcframework'
+        ls ./xcframework && mv ./xcframework  ../../ && cd ../../
+        
+        echo '再次查看xcframework'
+        ls ./xcframework
+
+        git clone https://github.com/Fixfly-SS/mpv-lib.git
+        cd mpv-lib
+
+        echo '再次查看xcframework'
+        ls ../xcframework
+
+        rsync -a --ignore-existing ../xcframework/ ./Sources
+        echo '查看Sources'
+        ls ./Sources
+        git remote set-url origin https://Fixfly-SS:$GH_TOKEN@github.com/Fixfly-SS/mpv-lib.git
+        git add .
+        git commit -m 'new build'
+        git push origin main
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}

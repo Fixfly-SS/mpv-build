@@ -1,0 +1,38 @@
+diff --git a/tools/fuzz/fuzz.cpp b/tools/fuzz/fuzz.cpp
+index 5f2a0080..dd099e03 100644
+--- a/tools/fuzz/fuzz.cpp
++++ b/tools/fuzz/fuzz.cpp
+@@ -45,12 +45,12 @@ enum class FuzzingTarget { kSpirv, kWgsl };
+ // Returns true if and only if the command's exit status was 0.
+ bool ExecuteCommand(const std::string& command) {
+   errno = 0;
+-  int status = std::system(command.c_str());
++  FILE* fp = popen(command.c_str(), "r");
+   assert(errno == 0 && "failed to execute command");
+   // The result returned by 'system' is implementation-defined, but is
+   // usually the case that the returned value is 0 when the command's exit
+   // code was 0.  We are assuming that here, and that's all we depend on.
+-  return status == 0;
++  return fp != NULL;
+ }
+ 
+ // Status and actions to perform after parsing command-line arguments.
+diff --git a/tools/reduce/reduce.cpp b/tools/reduce/reduce.cpp
+index 959f5a2f..712ae0e8 100644
+--- a/tools/reduce/reduce.cpp
++++ b/tools/reduce/reduce.cpp
+@@ -34,12 +34,12 @@ namespace {
+ // Returns true if and only if the command's exit status was 0.
+ bool ExecuteCommand(const std::string& command) {
+   errno = 0;
+-  int status = std::system(command.c_str());
++  FILE* fp = popen(command.c_str(), "r");
+   assert(errno == 0 && "failed to execute command");
+   // The result returned by 'system' is implementation-defined, but is
+   // usually the case that the returned value is 0 when the command's exit
+   // code was 0.  We are assuming that here, and that's all we depend on.
+-  return status == 0;
++  return fp != NULL;
+ }
+ 
+ // Status and actions to perform after parsing command-line arguments.
