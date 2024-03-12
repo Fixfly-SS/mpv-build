@@ -61,7 +61,7 @@ create_lipo()
     lipo -create  ${LIPO_ARGUMENTS[$1]} -output $LIPO_OUT_DIR/$(cap_first_letter $1)
 
     cp -a $ROOT_DIR/meta/Info.plist $LIPO_OUT_DIR/Info.plist
-    sed -i "s/{NAME}/$1/g" $LIPO_OUT_DIR/Info.plist
+    sed -i "s/{NAME}/$(cap_first_letter $1)/g" $LIPO_OUT_DIR/Info.plist
 
     mkdir -p $LIPO_OUT_DIR/Modules
     cp -a $ROOT_DIR/meta/module.modulemap $LIPO_OUT_DIR/Modules/module.modulemap
